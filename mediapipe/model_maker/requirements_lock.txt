@@ -156,7 +156,7 @@ packaging==24.1
     #   tensorflow-addons
 pandas==2.2.3
     # via tf-models-official
-pillow==10.4.0
+pillow==12.2.0
     # via
     #   matplotlib
     #   tf-models-official
