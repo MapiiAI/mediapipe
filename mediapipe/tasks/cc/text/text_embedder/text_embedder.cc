@@ -33,6 +33,7 @@ limitations under the License.
 #include "mediapipe/tasks/cc/components/utils/cosine_similarity.h"
 #include "mediapipe/tasks/cc/core/base_options.h"
 #include "mediapipe/tasks/cc/core/proto/base_options.pb.h"
+#include "mediapipe/tasks/cc/core/running_mode.h"
 #include "mediapipe/tasks/cc/core/task_api_factory.h"
 #include "mediapipe/tasks/cc/core/task_runner.h"
 #include "mediapipe/tasks/cc/text/text_embedder/proto/text_embedder_graph_options.pb.h"
@@ -75,9 +76,9 @@ std::string GetTaskString(const EmbeddingType& task_type) {
   }
 }
 
-std::string GetGeckoEmbeddingText(absl::string_view text,
-                                  const TextFormatContext& format_context) {
-  EmbeddingType task_type = format_context.task_type.value();
+std::string GetFormattedEmbeddingText(absl::string_view text,
+                                      const TextFormatContext& format_context) {
+  EmbeddingType task_type = format_context.task_type;
   bool is_query = format_context.role != TextRole::kDocument;
   const std::string title =
       format_context.title.has_value() && !format_context.title->empty()
@@ -140,7 +141,7 @@ absl::StatusOr<std::unique_ptr<TextEmbedder>> TextEmbedder::Create(
       core::TaskRunnerOptions{
           .config = CreateGraphConfig(std::move(options_proto)),
           .task_name = kTaskName,
-          .task_running_mode = core::TaskApiFactory::kUnknownRunningMode,
+          .task_running_mode = core::RunningMode::kUnspecified,
           .op_resolver = std::move(options->base_options.op_resolver),
           .host_environment = options->base_options.host_environment,
           .host_system = options->base_options.host_system,
@@ -159,12 +160,7 @@ absl::StatusOr<TextEmbedderResult> TextEmbedder::Embed(absl::string_view text) {
 
 absl::StatusOr<TextEmbedderResult> TextEmbedder::Embed(
     absl::string_view text, const TextFormatContext& format_context) {
-  std::string processed_text;
-  if (format_context.task_type.has_value()) {
-    processed_text = GetGeckoEmbeddingText(text, format_context);
-  } else {
-    processed_text = std::string(text);
-  }
+  std::string processed_text = GetFormattedEmbeddingText(text, format_context);
   MP_ASSIGN_OR_RETURN(
       auto output_packets,
       runner_->Process(

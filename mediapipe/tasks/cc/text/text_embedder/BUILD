@@ -39,6 +39,7 @@ cc_library(
         "//mediapipe/tasks/cc/components/utils:cosine_similarity",
         "//mediapipe/tasks/cc/core:base_options",
         "//mediapipe/tasks/cc/core:base_task_api",
+        "//mediapipe/tasks/cc/core:running_mode",
         "//mediapipe/tasks/cc/core:task_api_factory",
         "//mediapipe/tasks/cc/core:task_runner",
         "//mediapipe/tasks/cc/core/proto:base_options_cc_proto",
@@ -59,6 +60,7 @@ cc_library(
         "//mediapipe/framework:calculator_framework",
         "//mediapipe/framework/api2:builder",
         "//mediapipe/framework/api2:port",
+        "//mediapipe/framework/port:status",
         "//mediapipe/tasks/cc/components/calculators:tensors_to_embeddings_calculator_cc_proto",
         "//mediapipe/tasks/cc/components/containers/proto:embeddings_cc_proto",
         "//mediapipe/tasks/cc/components/processors:embedding_postprocessing_graph",
@@ -88,6 +90,7 @@ cc_test(
     name = "text_embedder_test",
     srcs = ["text_embedder_test.cc"],
     data = [
+        "//mediapipe/tasks/testdata/text:gecko_model",
         "//mediapipe/tasks/testdata/text:mobilebert_embedding_model",
         "//mediapipe/tasks/testdata/text:regex_embedding_with_metadata",
         "//mediapipe/tasks/testdata/text:universal_sentence_encoder_qa",
